@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Airlines Sentiment Analysis</title>
+    <link rel="stylesheet" href="styles.css">
+    <script defer src="script.js"></script>
+    <style>
+        body {
+            background: linear-gradient(to right, #74ebd5, #acb6e5);
+            font-family: Arial, sans-serif;
+            text-align: center;
+            overflow: hidden;
+        }
+        header {
+            font-size: 2rem;
+            color: white;
+            margin-top: 20px;
+            animation: fadeIn 2s ease-in-out;
+        }
+        .animation {
+            position: relative;
+            height: 200px;
+            margin-top: 50px;
+        }
+        .airplane {
+            width: 100px;
+            position: absolute;
+            left: -100px;
+            top: 50px;
+            animation: fly 5s linear infinite;
+        }
+        @keyframes fly {
+            0% { left: -100px; top: 50px; }
+            50% { left: 50%; top: 10px; transform: rotate(10deg); }
+            100% { left: 110%; top: 50px; }
+        }
+        .predict-btn {
+            background: #ff7eb3;
+            color: white;
+            font-size: 1.5rem;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: transform 0.3s;
+            animation: pulse 2s infinite;
+        }
+        .predict-btn:hover {
+            transform: scale(1.1);
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        .info {
+            background: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            margin: 30px;
+            border-radius: 10px;
+            animation: fadeInUp 2s ease-in-out;
+        }
+        @keyframes fadeInUp {
+            0% { opacity: 0; transform: translateY(50px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Airlines Sentiment Analysis</h1>
+        </header>
+        <main>
+            <div class="animation">
+                <img src="airplane.png" class="airplane" alt="Flying Airplane">
+            </div>
+            <button class="predict-btn">Predict Sentiment</button>
+        </main>
+        <section class="info">
+            <h2>About Airlines Sentiment Analysis</h2>
+            <p>Analyze customer feedback to understand airline sentiment and improve services.</p>
+        </section>
+    </div>
+</body>
+</html>
