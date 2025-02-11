@@ -3,83 +3,86 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Airline Sentiment Analysis</title>
-    <link rel="stylesheet" href="styles.css">
-    <script defer src="script.js"></script>
+    <title>Flight Sentiment Analyzer</title>
     <style>
         body {
-            background: linear-gradient(to right, #ff758c, #ff7eb3);
             font-family: Arial, sans-serif;
             text-align: center;
-            color: white;
-            overflow-x: hidden;
+            background-color: white;
+            transition: background-color 1s ease-in-out;
         }
         .container {
-            padding: 20px;
+            margin-top: 50px;
         }
-        .animated-header {
-            font-size: 2.5rem;
-            animation: fadeIn 2s ease-in-out;
-        }
-        .animated-section {
-            margin: 20px;
-            padding: 20px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 10px;
-            box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
-            animation: slideIn 1.5s ease-in-out;
-        }
-        .animated-button {
-            background: #ff4e50;
-            border: none;
-            padding: 15px 30px;
-            font-size: 1.2rem;
-            color: white;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: transform 0.3s ease-in-out;
-        }
-        .animated-button:hover {
-            transform: scale(1.1);
-            background: #fc913a;
-        }
-        .animated-footer {
-            margin-top: 20px;
+        #feedback {
+            width: 80%;
             padding: 10px;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 10px;
-            font-size: 1rem;
+            font-size: 16px;
         }
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+        #predict-btn {
+            padding: 10px 20px;
+            font-size: 18px;
+            cursor: pointer;
+            background-color: #ff6600;
+            color: white;
+            border: none;
+            margin-top: 10px;
         }
-        @keyframes slideIn {
-            from { transform: translateY(50px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
+        .airplane {
+            position: absolute;
+            width: 100px;
+            animation: fly 10s infinite linear;
+        }
+        @keyframes fly {
+            0% { transform: translateX(-150px); }
+            100% { transform: translateX(100vw); }
+        }
+        #emoji {
+            font-size: 50px;
+            margin-top: 10px;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <header class="animated-header">
-            <h1>Airline Sentiment Analysis</h1>
-        </header>
-        <main>
-            <section class="info animated-section">
-                <p>Discover how customers feel about different airlines. Our sentiment analysis tool helps analyze reviews to understand overall customer satisfaction.</p>
-            </section>
-            <section class="airline-info animated-section">
-                <h2>About Airlines</h2>
-                <p>Airlines are a crucial part of global connectivity. Learn about top airlines, their services, and customer experiences.</p>
-            </section>
-            <section class="prediction animated-section">
-                <button id="predict-btn" class="animated-button">Predict Sentiment</button>
-            </section>
-        </main>
-        <footer class="animated-footer">
-            <p>&copy; 2025 Airline Sentiment Analysis | All Rights Reserved</p>
-        </footer>
+        <h1>Flight Sentiment Analyzer</h1>
+        <input type="text" id="feedback" placeholder="Enter your feedback about the flight...">
+        <button id="predict-btn">Predict Sentiment</button>
+        <h2 id="result"></h2>
+        <div id="emoji"></div>
     </div>
+
+    <!-- Animated Airplanes -->
+    <img src="static/th.jpeg" class="airplane" style="top: 10%;" />
+    <img src="static/th.jpeg" class="airplane" style="top: 50%;" />
+    <img src="static/th.jpeg" class="airplane" style="top: 80%;" />
+
+
+    <script>
+        document.getElementById("predict-btn").addEventListener("click", function() {
+            const text = document.getElementById("feedback").value;
+            fetch("/predict", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ text })
+            })
+            .then(response => response.json())
+            .then(data => {
+                let emoji = "";
+                if (data.sentiment === "positive") {
+                    document.body.style.backgroundColor = "#98FB98";
+                    emoji = "😃";
+                } else if (data.sentiment === "negative") {
+                    document.body.style.backgroundColor = "#FF6347";
+                    emoji = "😢";
+                } else {
+                    document.body.style.backgroundColor = "#ADD8E6";
+                    emoji = "😐";
+                }
+                document.getElementById("result").innerText = "Sentiment: " + data.sentiment;
+                document.getElementById("emoji").innerText = emoji;
+            });
+        });
+    </script>
 </body>
 </html>
