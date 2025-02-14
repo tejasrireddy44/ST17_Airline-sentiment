@@ -1,64 +1,58 @@
-import nltk
-nltk.download('punkt_tab')
-from flask import Flask, render_template, request, redirect, url_for
-import pandas as pd
+import os
+import pickle
 import re
 import string
+from flask import Flask, render_template, request, redirect, url_for
 import nltk
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 
-
 # Initialize Flask app
 app = Flask(__name__)
 
-# Download NLTK resources if not available
+# Download NLTK resources
 nltk.download("stopwords")
 nltk.download("punkt")
 nltk.download("wordnet")
 
-# Preload stopwords & lemmatizer
+# Load stopwords & lemmatizer
 stop_words = set(stopwords.words("english"))
 lemmatizer = WordNetLemmatizer()
+
+# ✅ Load the trained ML model and vectorizer
+model_path = "c:/Users/TEJASRI REDDY.V/Desktop/ST17_Airline _sentiment/models"
+
+with open(os.path.join(model_path, "sentiment_model.pkl"), "rb") as f:
+    model = pickle.load(f)
+
+with open(os.path.join(model_path, "tfidf_vectorizer.pkl"), "rb") as f:
+    vectorizer = pickle.load(f)
 
 def clean_text(text):
     """Cleans and preprocesses text for sentiment analysis."""
     if not isinstance(text, str):
         return ""
 
-    # Convert to lowercase
-    text = text.lower()
-
-    # Remove mentions, hashtags, and URLs
-    text = re.sub(r"@\w+|#\w+|http\S+", "", text)
-
-    # Remove punctuation
-    text = text.translate(str.maketrans("", "", string.punctuation))
-
-    # Tokenization
-    tokens = word_tokenize(text)
-
-    # Remove stopwords
-    tokens = [word for word in tokens if word not in stop_words]
-
-    # Lemmatization
-    tokens = [lemmatizer.lemmatize(word) for word in tokens]
+    text = re.sub(r"@\w+|#\w+|http\S+", "", text.lower())  # Remove mentions, hashtags, URLs
+    text = text.translate(str.maketrans("", "", string.punctuation))  # Remove punctuation
+    tokens = [lemmatizer.lemmatize(word) for word in word_tokenize(text) if word not in stop_words]
 
     return " ".join(tokens)
 
-def analyze_sentiment(text):
-    """Dummy function for sentiment analysis (replace with ML model later)."""
-    text = clean_text(text)
-    positive_words = ["good", "amazing", "fantastic", "great", "excellent", "loved"]
-    negative_words = ["bad", "terrible", "worst", "hate", "awful", "sad"]
+def analyze_sentiment_ml(text):
+    """Predict sentiment using the trained ML model with a confidence threshold."""
+    cleaned_text = clean_text(text)
+    transformed_text = vectorizer.transform([cleaned_text])
+    
+    probs = model.predict_proba(transformed_text)[0]
+    predicted_label = model.classes_[probs.argmax()]
 
-    if any(word in text for word in positive_words):
-        return "positive"
-    elif any(word in text for word in negative_words):
-        return "negative"
-    else:
+    # ✅ Set a threshold to avoid misclassification of weak predictions
+    if probs.max() < 0.6:
         return "neutral"
+    
+    return predicted_label
 
 @app.route("/")
 def home():
@@ -71,8 +65,8 @@ def predict():
     if not user_text.strip():
         return redirect(url_for("home"))
 
-    sentiment = analyze_sentiment(user_text)
-    
+    sentiment = analyze_sentiment_ml(user_text)  # Use ML model for prediction
+
     return redirect(url_for("result", sentiment=sentiment))
 
 @app.route("/result")
