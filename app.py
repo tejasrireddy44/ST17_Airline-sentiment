@@ -2,7 +2,7 @@ import os
 import pickle
 import re
 import string
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, jsonify
 import nltk
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
@@ -60,12 +60,20 @@ def home():
 
 @app.route("/predict", methods=["POST"])
 def predict():
-    user_text = request.form.get("feedback")
+    """Handles both JSON and form-based predictions."""
+    if request.content_type == "application/json":
+        data = request.get_json()
+        text = data.get("text", "")
+    else:
+        text = request.form.get("feedback", "")
 
-    if not user_text.strip():
+    if not text.strip():
         return redirect(url_for("home"))
 
-    sentiment = analyze_sentiment_ml(user_text)  # Use ML model for prediction
+    sentiment = analyze_sentiment_ml(text)  
+
+    if request.content_type == "application/json":
+        return jsonify({"sentiment": sentiment})
 
     return redirect(url_for("result", sentiment=sentiment))
 
@@ -75,4 +83,4 @@ def result():
     return render_template("result.html", sentiment=sentiment)
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0" , port="5050")
+    app.run(host="0.0.0.0", port=5050)
