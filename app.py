@@ -7,6 +7,22 @@ import nltk
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
+from flask import Flask, request, jsonify
+
+# Ensure NLTK downloads persist
+nltk_data_path = "/opt/render/project/nltk_data"
+os.makedirs(nltk_data_path, exist_ok=True)
+nltk.data.path.append(nltk_data_path)
+
+
+
+# Your existing functions (clean_text, analyze_sentiment_ml, etc.)
+
+# Download required NLTK resources
+nltk.download("punkt")
+nltk.download("stopwords")  # If using stopwords
+nltk.download("wordnet")  # If using WordNet Lemmatizer
+
 
 # Initialize Flask app
 app = Flask(__name__)
