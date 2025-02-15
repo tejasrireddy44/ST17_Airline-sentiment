@@ -11,7 +11,7 @@ from nltk.stem import WordNetLemmatizer
 # Initialize Flask app
 app = Flask(__name__)
 
-# Download NLTK resources
+# Download NLTK resources (only needed once)
 nltk.download("stopwords")
 nltk.download("punkt")
 nltk.download("wordnet")
@@ -20,13 +20,24 @@ nltk.download("wordnet")
 stop_words = set(stopwords.words("english"))
 lemmatizer = WordNetLemmatizer()
 
-# ✅ Load the trained ML model and vectorizer
-model_path = "c:/Users/TEJASRI REDDY.V/Desktop/ST17_Airline _sentiment/models"
+# ✅ Set relative model path (for Render deployment)
+model_path = os.path.join(os.path.dirname(__file__), "models")
 
-with open(os.path.join(model_path, "sentiment_model.pkl"), "rb") as f:
+# ✅ Check if model files exist before loading
+sentiment_model_file = os.path.join(model_path, "sentiment_model.pkl")
+tfidf_vectorizer_file = os.path.join(model_path, "tfidf_vectorizer.pkl")
+
+if not os.path.exists(sentiment_model_file):
+    raise FileNotFoundError(f"Model file not found: {sentiment_model_file}")
+
+if not os.path.exists(tfidf_vectorizer_file):
+    raise FileNotFoundError(f"Vectorizer file not found: {tfidf_vectorizer_file}")
+
+# ✅ Load model & vectorizer
+with open(sentiment_model_file, "rb") as f:
     model = pickle.load(f)
 
-with open(os.path.join(model_path, "tfidf_vectorizer.pkl"), "rb") as f:
+with open(tfidf_vectorizer_file, "rb") as f:
     vectorizer = pickle.load(f)
 
 def clean_text(text):
