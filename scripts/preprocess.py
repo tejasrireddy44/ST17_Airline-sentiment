@@ -52,7 +52,11 @@ def clean_dataset(input_file="c:/Users/TEJASRI REDDY.V/Desktop/ST17_Airline _sen
     # Fill empty positive feedback with strong positive words
     positive_keywords = [
         "Amazing experience!", "Fantastic service!", "Loved my flight!", "super experience",
+
         "Best airline ever!", "Super smooth travel!", "Excellent service!","very good"
+
+        "Best airline ever!", "Super smooth travel!", "Excellent service!","very good","nice"
+
     ]
     
     df.loc[(df["airline_sentiment"] == "positive") & (df["text"].isna()), "text"] = df["text"].fillna(lambda _: positive_keywords.pop(0) if positive_keywords else "Great flight!")
@@ -63,7 +67,13 @@ def clean_dataset(input_file="c:/Users/TEJASRI REDDY.V/Desktop/ST17_Airline _sen
     # Save cleaned data
     output_file = "c:/Users/TEJASRI REDDY.V/Desktop/ST17_Airline _sentiment/data/cleaned_airline_tweets.csv"
     df.to_csv(output_file, index=False)
+
     print(f"✅ Preprocessed data saved to {output_file}")
 
 if __name__ == "__main__":
     clean_dataset()
+    print(f" Preprocessed data saved to {output_file}")
+
+if __name__ == "__main__":
+    clean_dataset()
+

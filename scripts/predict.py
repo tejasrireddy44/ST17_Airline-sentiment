@@ -65,4 +65,8 @@ if __name__ == "__main__":
     test_text = input().strip()
 
     sentiment = predict_sentiment(test_text)
+
     print(f"Predicted Sentiment: {sentiment}")
+
+    print(f"Predicted Sentiment: {sentiment}")
+
